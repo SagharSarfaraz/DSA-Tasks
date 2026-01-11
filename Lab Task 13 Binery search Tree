@@ -1,0 +1,154 @@
+//Lab Task 13 
+//lab task 13 implement Binary search tree insert, deletion and traverse ( inoer, preorder and postordr) It oop but very very simple
+#include <iostream>
+using namespace std;
+
+// BST Node class
+class Node {
+public:
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int value) {
+        data = value;
+        left = right = nullptr;
+    }
+};
+
+// BST class
+class BST {
+private:
+    Node* root;
+
+    // Helper function for insertion
+    Node* insert(Node* node, int value) {
+        if (node == nullptr) return new Node(value);
+        if (value < node->data)
+            node->left = insert(node->left, value);
+        else
+            node->right = insert(node->right, value);
+        return node;
+    }
+
+    // Helper function to find minimum node
+    Node* minValueNode(Node* node) {
+        Node* current = node;
+        while (current && current->left != nullptr)
+            current = current->left;
+        return current;
+    }
+
+    // Helper function for deletion
+    Node* deleteNode(Node* node, int value) {
+        if (node == nullptr) return node;
+
+        if (value < node->data)
+            node->left = deleteNode(node->left, value);
+        else if (value > node->data)
+            node->right = deleteNode(node->right, value);
+        else {
+            // Node with one or no child
+            if (node->left == nullptr) {
+                Node* temp = node->right;
+                delete node;
+                return temp;
+            } else if (node->right == nullptr) {
+                Node* temp = node->left;
+                delete node;
+                return temp;
+            }
+
+            // Node with two children
+            Node* temp = minValueNode(node->right);
+            node->data = temp->data;
+            node->right = deleteNode(node->right, temp->data);
+        }
+        return node;
+    }
+
+    // Traversals
+    void inorder(Node* node) {
+        if (node != nullptr) {
+            inorder(node->left);
+            cout << node->data << " ";
+            inorder(node->right);
+        }
+    }
+
+    void preorder(Node* node) {
+        if (node != nullptr) {
+            cout << node->data << " ";
+            preorder(node->left);
+            preorder(node->right);
+        }
+    }
+
+    void postorder(Node* node) {
+        if (node != nullptr) {
+            postorder(node->left);
+            postorder(node->right);
+            cout << node->data << " ";
+        }
+    }
+
+public:
+    // Constructor
+    BST() {
+        root = nullptr;
+    }
+
+    // Public functions
+    void insert(int value) {
+        root = insert(root, value);
+    }
+
+    void deleteValue(int value) {
+        root = deleteNode(root, value);
+    }
+
+    void inorder() {
+        inorder(root);
+        cout << endl;
+    }
+
+    void preorder() {
+        preorder(root);
+        cout << endl;
+    }
+
+    void postorder() {
+        postorder(root);
+        cout << endl;
+    }
+};
+
+// Main function
+int main() {
+    BST tree;
+
+    // Insert nodes
+    tree.insert(50);
+    tree.insert(30);
+    tree.insert(70);
+    tree.insert(20);
+    tree.insert(40);
+    tree.insert(60);
+    tree.insert(80);
+
+    cout << "Inorder traversal: ";
+    tree.inorder();
+
+    cout << "Preorder traversal: ";
+    tree.preorder();
+
+    cout << "Postorder traversal: ";
+    tree.postorder();
+
+    // Delete a node
+    tree.deleteValue(20);
+    cout << "After deleting 20, Inorder traversal: ";
+    tree.inorder();
+
+    return 0;
+}
